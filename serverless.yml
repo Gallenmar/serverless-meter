@@ -15,10 +15,36 @@ provider:
     STAGE: ${env:STAGE}
 
 functions:
-  api:
-    handler: src/handler.handler
+  readId:
+    handler: src/read.handler
     events:
-      - httpApi: "*"
+      - httpApi:
+          path: /counters/{id}
+          method: GET
+  readAll:
+    handler: src/read.handler
+    events:
+      - httpApi:
+          path: /counters
+          method: GET
+  create:
+    handler: src/create.handler
+    events:
+      - httpApi:
+          path: /counters
+          method: POST
+  update:
+    handler: src/update.handler
+    events:
+      - httpApi:
+          path: /counters/{id}
+          method: PATCH
+  delete:
+    handler: src/delete.handler
+    events:
+      - httpApi:
+          path: /counters/{id}
+          method: DELETE
 
 plugins:
   - serverless-offline

@@ -1,33 +1,30 @@
-// Import necessary modules
 import express from "express";
 import serverless from "serverless-http";
 import { getDrizzleClient } from "./db/client.js";
 import { countersTable } from "./db/schemas.js";
 
-// Initialize the Express application
 const app = express();
 
-// Middleware to parse JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Basic endpoint example
-app.get("/", (req, res) => {
-	res.send("Hello World");
-});
-
-app.get("/test", async (req, res) => {
+app.post("/counters", async (req, res) => {
 	const drizzleClient = getDrizzleClient();
-	const result = await drizzleClient.select().from(countersTable);
-	res.send(result);
+	try {
+		const result = await drizzleClient.insert(countersTable).values(req.body);
+		res.status(201).json(result);
+	} catch (error) {
+		res.status(400).json({
+			error: "Failed to create counter",
+			details: error.message,
+		});
+	}
 });
 
-// 404 handler
 app.use((req, res) => {
 	res.status(404).json({
-		error: "Not Found",
+		error: "Not Found - Create",
 	});
 });
 
-// Export the handler for serverless
 export const handler = serverless(app);

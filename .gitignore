@@ -1,3 +1,4 @@
 .env.prod
 .serverless
 node_modules
+dev.db
